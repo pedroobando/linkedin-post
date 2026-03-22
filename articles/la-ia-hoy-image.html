@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            width: 1200px;
+            height: 630px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Elementos decorativos de fondo */
+        .glow-1 {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+            top: -200px;
+            right: -200px;
+            border-radius: 50%;
+        }
+        
+        .glow-2 {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+            bottom: -150px;
+            left: -150px;
+            border-radius: 50%;
+        }
+        
+        /* Grid de fondo sutil */
+        .grid {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        
+        /* Contenido principal */
+        .content {
+            z-index: 10;
+            text-align: center;
+            padding: 60px;
+        }
+        
+        /* Icono/Emoji decorativo */
+        .icon {
+            font-size: 64px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        /* Título principal */
+        h1 {
+            color: #ffffff;
+            font-size: 72px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+        }
+        
+        h1 .highlight {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Subtítulo */
+        .subtitle {
+            color: #94a3b8;
+            font-size: 28px;
+            font-weight: 400;
+            margin-bottom: 40px;
+            line-height: 1.4;
+        }
+        
+        /* Línea divisoria */
+        .divider {
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            margin: 0 auto 40px;
+            border-radius: 2px;
+        }
+        
+        /* Etiquetas/tags */
+        .tags {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .tag {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        
+        /* Transformación visual */
+        .transformation {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px 30px;
+            color: #94a3b8;
+            font-size: 18px;
+        }
+        
+        .arrow {
+            color: #3b82f6;
+            font-size: 32px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid"></div>
+    <div class="glow-1"></div>
+    <div class="glow-2"></div>
+    
+    <div class="content">
+        <div class="icon">🤖</div>
+        
+        <h1>
+            La IA <span class="highlight">hoy</span>
+        </h1>
+        
+        <p class="subtitle">
+            De operador a orquestador:<br>
+            cómo los agentes cambiaron todo
+        </p>
+        
+        <div class="divider"></div>
+        
+        <div class="transformation">
+            <div class="box">Prompts</div>
+            <div class="arrow">→</div>
+            <div class="box">Agentes</div>
+            <div class="arrow">→</div>
+            <div class="box">Autonomía</div>
+        </div>
+        
+        <div class="tags" style="margin-top: 40px;">
+            <span class="tag">#AgentesDeIA</span>
+            <span class="tag">#MCP</span>
+            <span class="tag">#TransformaciónDigital</span>
+        </div>
+    </div>
+</body>
+</html>

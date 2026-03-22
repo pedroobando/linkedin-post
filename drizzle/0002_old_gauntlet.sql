@@ -1,0 +1,1 @@
+ALTER TABLE `tags` ADD `active` integer NOT NULL;

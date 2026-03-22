@@ -1,0 +1,8 @@
+# LinkedIn Post - SQLite Database
+# No Docker required - uses local SQLite file
+
+# To start development:
+# pnpm install
+# pnpm db:generate
+# pnpm db:migrate
+# pnpm dev

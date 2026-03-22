@@ -1,0 +1,66 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "opencode-go/kimi-k2.5",
+  "small_model": "opencode-go/minimax-m2.5",
+  "provider": {
+    "opencode-go": {
+      "options": {
+        "apiKey": "sk-sbOfvxZrwZyDPIVItTwuI9GcLwjzRI1DVYp5p8TMXj7e66l60pWFC5nHVqkzjnDd",
+      },
+    },
+  },
+  "permission": {
+    "bash": {
+      "*": "ask",
+      "npx skills *": "allow",
+      "small_model": "allow",
+    },
+    "edit": {
+      "*": "ask",
+      "/home/pedro/node/nextjs/coach360/obsidean/**": "allow",
+      "*.md": "allow",
+      "small_model": "allow",
+    },
+    "write": {
+      "*": "ask",
+      "/home/pedro/node/nextjs/coach360/obsidean/**": "allow",
+      "*.md": "allow",
+    },
+    "read": {
+      "/home/pedro/node/nextjs/coach360/obsidean/**": "allow",
+      "*.md": "allow",
+    },
+  },
+
+  "mcp": {
+    "shadcn": {
+      "type": "local",
+      "command": ["npx", "shadcn@latest", "mcp"],
+      "enabled": true,
+    },
+    "nextjs": {
+      "type": "local",
+      "command": ["npx", "-y", "next-devtools-mcp@latest"],
+      "enabled": true,
+    },
+    "context7": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "CONTEXT7_API_KEY": "ctx7sk-aae0191a-2c0c-4855-aa42-dd804b001a5d",
+      },
+      "enabled": true,
+    },
+  },
+
+  // "agent": {
+  //   "routing": {
+  //     "*.md": {
+  //       "useSubagent": true,
+  //       "model": "small_model",
+  //     },
+  //   },
+  // },
+
+  "autoupdate": true,
+}
