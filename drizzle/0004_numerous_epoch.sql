@@ -1,0 +1,1 @@
+ALTER TABLE `tags` ADD `user_id` text REFERENCES users(id);

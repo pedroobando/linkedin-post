@@ -38,8 +38,9 @@ export {
 } from './ass-tag';
 
 // Utilities
-export { MAX_TAGS_PER_ARTICLE, MAX_TAG_LENGTH, slugify } from './utils';
+export { MAX_TAGS_PER_ARTICLE, MAX_TAG_LENGTH, slugify, canModifyTag } from './utils';
 
 // Types
 export type { TagWithCount } from './get-tag';
 export type { Tag, NewTag } from '@/db/schema';
+export type { TagWithOwnership } from './utils';

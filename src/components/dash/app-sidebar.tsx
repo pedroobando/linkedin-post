@@ -1,5 +1,3 @@
-'use client';
-
 import * as React from 'react';
 
 import { NavDocuments } from '@/components/dash/nav-documents';
@@ -29,17 +27,13 @@ import {
   IconArticleFilled,
   IconTag,
 } from '@tabler/icons-react';
+import { getServerSession } from '@/lib/get-session';
 
 const data = {
-  user: {
-    name: 'User',
-    email: 'user@example.com',
-    avatar: '/avatars/user.jpg',
-  },
   navMain: [
     {
       title: 'Dashboard',
-      url: '/dash',
+      url: '/',
       icon: <IconDashboard />,
     },
     {
@@ -54,7 +48,7 @@ const data = {
     },
     {
       title: 'Tags',
-      url: '/dash/tags',
+      url: '/tags',
       icon: <IconTag />,
     },
     {
@@ -104,7 +98,19 @@ const data = {
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export async function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const session = await getServerSession();
+  
+  const user = session?.user ? {
+    name: session.user.name || 'User',
+    email: session.user.email || '',
+    avatar: session.user.image || '/avatars/user.jpg',
+  } : {
+    name: 'Guest',
+    email: '',
+    avatar: '/avatars/user.jpg',
+  };
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -125,7 +131,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   );

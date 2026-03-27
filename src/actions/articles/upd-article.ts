@@ -16,11 +16,13 @@ import type { ArticleWithTags } from './utils';
  * Update an existing article.
  * @param id - The article ID
  * @param data - Article data to update
+ * @param userId - The ID of the user updating the article (required for tag updates)
  * @returns The updated article
  */
 export const updateArticle = async (
   id: string,
-  data: Partial<NewArticle> & { tagNames?: string[] }
+  data: Partial<NewArticle> & { tagNames?: string[] },
+  userId?: string
 ): Promise<Article> => {
   if (!isValidUUID(id)) {
     throw new Error(`El ID ${id}, no es valido, favor verificar.`);
@@ -52,7 +54,10 @@ export const updateArticle = async (
 
   // If tags provided, update associations
   if (tagNames) {
-    await setArticleTags(id, tagNames);
+    if (!userId) {
+      throw new Error('User ID is required to update tags');
+    }
+    await setArticleTags(id, tagNames, userId);
   }
 
   return result[0] as Article;
@@ -105,10 +110,12 @@ export const updateArticleStatus = async (
 /**
  * Upsert an article (create or update).
  * @param data - Article data with optional id for update
+ * @param userId - The ID of the user upserting the article (required for tag operations)
  * @returns The created or updated article
  */
 export const upsertArticle = async (
-  data: NewArticle & { id?: string; tagNames?: string[] }
+  data: NewArticle & { id?: string; tagNames?: string[] },
+  userId?: string
 ): Promise<Article> => {
   const { id, tagNames, ...articleData } = data;
 
@@ -130,33 +137,35 @@ export const upsertArticle = async (
 
     // If exists, update
     if (existing && existing.length > 0) {
-      return updateArticle(id, { ...articleData, tagNames });
+      return updateArticle(id, { ...articleData, tagNames }, userId);
     }
   }
 
   // Otherwise insert new
   // Import insertArticle from ins-article to avoid circular dependency
   const { insertArticle } = await import('./ins-article');
-  return insertArticle({ ...articleData, tagNames });
+  return insertArticle({ ...articleData, tagNames }, userId);
 };
 
 /**
  * Update an article with tags
- * Firma compatible con editor-store: updateArticle(id, data, tags)
+ * Firma compatible con editor-store: updateArticle(id, data, tags, userId)
  * @param id - The article ID
  * @param data - Article data to update
  * @param tagNames - Optional array of tag names
+ * @param userId - The ID of the user updating the article (required for tag updates)
  * @returns The updated article with tags
  */
 export const updateArticleWithTags = async (
   id: string,
   data: Partial<NewArticle> & { status?: ArticleStatus; publishedAt?: Date | null },
-  tagNames?: string[]
+  tagNames?: string[],
+  userId?: string
 ): Promise<ArticleWithTags> => {
   const result = await updateArticle(id, {
     ...data,
     tagNames,
-  });
+  }, userId);
   
   // Get updated tags for the article
   const [tagsData] = await tryCatch(

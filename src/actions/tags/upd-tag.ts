@@ -8,18 +8,48 @@
 import { db, eq } from '@/db';
 import { tags } from '@/db/schema';
 import { Tag } from '@/db/schema';
-import { tryCatch, isValidUUID } from '@/utils';
-import { slugify } from './utils';
+import { tryCatch } from '@/utils';
+import { slugify, canModifyTag } from './utils';
 
 /**
  * Update an existing tag.
+ * Requires userId parameter for ownership validation.
+ * Global tags (userId = null) can be updated by any authenticated user.
+ * Personal tags can only be updated by their owner.
+ *
  * @param id - The tag ID
  * @param data - Tag name (string) or partial tag data to update
+ * @param userId - The ID of the user attempting to update (required)
  * @returns The updated tag
+ * @throws Error if userId is not provided, tag not found, or user doesn't have permission
  */
-export const updateTag = async (id: string, data: string | { name?: string; slug?: string }): Promise<Tag> => {
-  if (!isValidUUID(id)) {
-    throw new Error(`El ID ${id}, no es valido, favor verificar.`);
+export const updateTag = async (
+  id: string,
+  data: string | { name?: string; slug?: string },
+  userId: string,
+): Promise<Tag> => {
+  // Verify userId is provided
+  if (!userId) {
+    throw new Error('User ID is required');
+  }
+
+  // Fetch the tag to check ownership
+  const [tagData, tagErr] = await tryCatch(db.select().from(tags).where(eq(tags.id, id)).limit(1));
+
+  if (tagErr) {
+    console.error(tagErr.message);
+    throw new Error('Error no controlado buscando la etiqueta, favor verificar.');
+  }
+
+  if (!tagData || tagData.length === 0) {
+    throw new Error('Tag not found');
+  }
+
+  const tag = tagData[0];
+
+  // Validate ownership
+  if (!canModifyTag(tag, userId)) {
+    throw new Error('You can only edit your own tags or global tags');
   }
 
   // Prepare update data

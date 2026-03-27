@@ -8,7 +8,7 @@
 import { db, eq, and, sql } from '@/db';
 import { tags, articleTags } from '@/db/schema';
 import { Tag } from '@/db/schema';
-import { tryCatch, isValidUUID } from '@/utils';
+import { tryCatch } from '@/utils';
 import { upsertTag } from './ins-tag';
 
 /**
@@ -17,10 +17,6 @@ import { upsertTag } from './ins-tag';
  * @returns Array of tag names
  */
 export const getArticleTags = async (articleId: string): Promise<string[]> => {
-  if (!isValidUUID(articleId)) {
-    throw new Error(`El ID de artículo ${articleId}, no es valido, favor verificar.`);
-  }
-
   const [data, err] = await tryCatch(
     db
       .select({ name: tags.name })
@@ -44,10 +40,6 @@ export const getArticleTags = async (articleId: string): Promise<string[]> => {
  * @returns Array of tag objects
  */
 export const getArticleTagObjects = async (articleId: string): Promise<Tag[]> => {
-  if (!isValidUUID(articleId)) {
-    throw new Error(`El ID de artículo ${articleId}, no es valido, favor verificar.`);
-  }
-
   const [data, err] = await tryCatch(
     db
       .select({
@@ -75,10 +67,13 @@ export const getArticleTagObjects = async (articleId: string): Promise<Tag[]> =>
  * This removes existing tags and adds the new ones.
  * @param articleId - The article ID
  * @param tagNames - Array of tag names
+ * @param userId - The ID of the user creating tags (required)
+ * @throws Error if userId is not provided
  */
-export const setArticleTags = async (articleId: string, tagNames: string[]): Promise<void> => {
-  if (!isValidUUID(articleId)) {
-    throw new Error(`El ID de artículo ${articleId}, no es valido, favor verificar.`);
+export const setArticleTags = async (articleId: string, tagNames: string[], userId: string): Promise<void> => {
+  // Verify userId is provided
+  if (!userId) {
+    throw new Error('User ID is required');
   }
 
   // Start by removing all existing tag associations
@@ -100,7 +95,7 @@ export const setArticleTags = async (articleId: string, tagNames: string[]): Pro
   for (const tagName of tagNames) {
     if (!tagName.trim()) continue;
 
-    const tag = await upsertTag({ name: tagName.trim() });
+    const tag = await upsertTag({ name: tagName.trim() }, userId);
     tagIds.push(tag.id);
   }
 
@@ -124,10 +119,13 @@ export const setArticleTags = async (articleId: string, tagNames: string[]): Pro
  * Add a single tag to an article.
  * @param articleId - The article ID
  * @param tagName - The tag name to add
+ * @param userId - The ID of the user creating the tag (required)
+ * @throws Error if userId is not provided
  */
-export const addTagToArticle = async (articleId: string, tagName: string): Promise<void> => {
-  if (!isValidUUID(articleId)) {
-    throw new Error(`El ID de artículo ${articleId}, no es valido, favor verificar.`);
+export const addTagToArticle = async (articleId: string, tagName: string, userId: string): Promise<void> => {
+  // Verify userId is provided
+  if (!userId) {
+    throw new Error('User ID is required');
   }
 
   if (!tagName.trim()) {
@@ -135,7 +133,7 @@ export const addTagToArticle = async (articleId: string, tagName: string): Promi
   }
 
   // Get or create the tag
-  const tag = await upsertTag({ name: tagName.trim() });
+  const tag = await upsertTag({ name: tagName.trim() }, userId);
 
   // Check if association already exists
   const [existing, existingErr] = await tryCatch(
@@ -176,14 +174,6 @@ export const addTagToArticle = async (articleId: string, tagName: string): Promi
  * @param tagId - The tag ID to remove
  */
 export const removeTagFromArticle = async (articleId: string, tagId: string): Promise<void> => {
-  if (!isValidUUID(articleId)) {
-    throw new Error(`El ID de artículo ${articleId}, no es valido, favor verificar.`);
-  }
-
-  if (!isValidUUID(tagId)) {
-    throw new Error(`El ID de etiqueta ${tagId}, no es valido, favor verificar.`);
-  }
-
   const [_, err] = await tryCatch(
     db.delete(articleTags).where(and(eq(articleTags.articleId, articleId), eq(articleTags.tagId, tagId))),
   );

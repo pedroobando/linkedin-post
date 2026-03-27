@@ -5,10 +5,10 @@
 
 'use server';
 
-import { db, eq, count, like, sql, inArray } from '@/db';
+import { db, eq, count, like, sql } from '@/db';
 import { tags, articleTags } from '@/db/schema';
 import { Tag } from '@/db/schema';
-import { tryCatch, isValidUUID } from '@/utils';
+import { tryCatch } from '@/utils';
 
 /**
  * Tag with article count
@@ -38,10 +38,6 @@ export const getAllTags = async (): Promise<Tag[]> => {
  * @returns The tag or null if not found
  */
 export const getTagById = async (id: string): Promise<Tag | null> => {
-  if (!isValidUUID(id)) {
-    throw new Error(`El ID ${id}, no es valido, favor verificar.`);
-  }
-
   const [data, err] = await tryCatch(db.select().from(tags).where(eq(tags.id, id)).limit(1));
 
   if (err && !data) {
@@ -80,6 +76,7 @@ export const getAllTagsWithCount = async (): Promise<TagWithCount[]> => {
         name: tags.name,
         slug: tags.slug,
         createdAt: tags.createdAt,
+        userId: tags.userId,
         count: sql<number>`count(${articleTags.articleId})`.mapWith(Number),
       })
       .from(tags)
@@ -125,10 +122,6 @@ export const searchTags = async (query: string, limit?: number): Promise<Tag[]> 
  * @returns Boolean indicating if tag can be deleted
  */
 export const canDeleteTag = async (id: string): Promise<boolean> => {
-  if (!isValidUUID(id)) {
-    throw new Error(`El ID ${id}, no es valido, favor verificar.`);
-  }
-
   const [data, err] = await tryCatch(db.select({ count: count() }).from(articleTags).where(eq(articleTags.tagId, id)));
 
   if (err && !data) {
