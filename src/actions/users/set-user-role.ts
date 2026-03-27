@@ -11,13 +11,13 @@ interface Props {
   isActive: boolean;
 }
 
-export const setUserRole = async ({ userId, isActive }: Props): Promise<IUser> => {
+export const setUserRole = async ({ userId }: Props): Promise<IUser> => {
   // const db = await getDb();
   const [dataUser, errorUser] = await tryCatch(
     db
       .update(users)
       .set({
-        isActive: isActive,
+        // isActive: isActive,
         updatedAt: new Date(),
       })
       .where(eq(users.id, userId))

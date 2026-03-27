@@ -9,7 +9,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { createArticle, updateArticle, ArticleWithTags, ArticleStatus } from '@/actions/articles';
+import { createArticle, updateArticle, ArticleWithTags, ArticleStatus } from '@/actions';
 
 export interface EditorState {
   // Article data

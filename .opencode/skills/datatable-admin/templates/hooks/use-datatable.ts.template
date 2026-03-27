@@ -1,0 +1,130 @@
+'use client';
+
+import * as React from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import {
+  get{{Entity}}Page,
+  ins{{Entity}},
+  set{{Entity}},
+  del{{Entity}},
+} from '@/actions/{{entity}}/{{entity}}';
+import { {{Entity}} } from '@/db/schema';
+
+interface Use{{Entity}}DatatableProps {
+  initialData: {{Entity}}[];
+  total: number;
+  currentPage: number;
+  pageSize: number;
+}
+
+export function use{{Entity}}Datatable({
+  initialData,
+  total,
+  currentPage,
+  pageSize,
+}: Use{{Entity}}DatatableProps) {
+  const queryClient = useQueryClient();
+  const [isFormOpen, setIsFormOpen] = React.useState(false);
+  const [editingItem, setEditingItem] = React.useState<{{Entity}} | null>(null);
+  const [deleteItem, setDeleteItem] = React.useState<{{Entity}} | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
+
+  // Query for fetching data
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ['{{entity}}', currentPage, pageSize],
+    queryFn: () => get{{Entity}}Page({ page: currentPage, take: pageSize }),
+    initialData: { data: initialData, total, totalPages: Math.ceil(total / pageSize) },
+  });
+
+  // Create mutation
+  const createMutation = useMutation({
+    mutationFn: ins{{Entity}},
+    onSuccess: () => {
+      toast.success('Registro creado exitosamente');
+      queryClient.invalidateQueries({ queryKey: ['{{entity}}'] });
+      setIsFormOpen(false);
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Error al crear el registro');
+    },
+  });
+
+  // Update mutation
+  const updateMutation = useMutation({
+    mutationFn: set{{Entity}},
+    onSuccess: () => {
+      toast.success('Registro actualizado exitosamente');
+      queryClient.invalidateQueries({ queryKey: ['{{entity}}'] });
+      setIsFormOpen(false);
+      setEditingItem(null);
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Error al actualizar el registro');
+    },
+  });
+
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: del{{Entity}},
+    onSuccess: () => {
+      toast.success('Registro eliminado exitosamente');
+      queryClient.invalidateQueries({ queryKey: ['{{entity}}'] });
+      setIsDeleteDialogOpen(false);
+      setDeleteItem(null);
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Error al eliminar el registro');
+    },
+  });
+
+  // Handlers
+  const handleCreate = React.useCallback(() => {
+    setEditingItem(null);
+    setIsFormOpen(true);
+  }, []);
+
+  const handleEdit = React.useCallback((item: {{Entity}}) => {
+    setEditingItem(item);
+    setIsFormOpen(true);
+  }, []);
+
+  const handleDelete = React.useCallback((item: {{Entity}}) => {
+    setDeleteItem(item);
+    setIsDeleteDialogOpen(true);
+  }, []);
+
+  const handleSubmit = React.useCallback(
+    async (formData: any) => {
+      if (editingItem) {
+        await updateMutation.mutateAsync({ ...formData, id: editingItem.id });
+      } else {
+        await createMutation.mutateAsync(formData);
+      }
+    },
+    [editingItem, createMutation, updateMutation]
+  );
+
+  const handleConfirmDelete = React.useCallback(async () => {
+    if (deleteItem) {
+      await deleteMutation.mutateAsync(deleteItem.id);
+    }
+  }, [deleteItem, deleteMutation]);
+
+  return {
+    items: data?.data ?? [],
+    isLoading,
+    isFormOpen,
+    editingItem,
+    deleteItem,
+    isDeleteDialogOpen,
+    setIsFormOpen,
+    setIsDeleteDialogOpen,
+    handleCreate,
+    handleEdit,
+    handleDelete,
+    handleSubmit,
+    handleConfirmDelete,
+    refetch,
+  };
+}

@@ -23,7 +23,11 @@ interface IRetData {
   };
 }
 
-export const signUpAction = async ({ email, name, password }: SignUpData): Promise<[IRetData, null] | [null, Error]> => {
+export const signUpAction = async ({
+  email,
+  name,
+  password,
+}: SignUpData): Promise<[IRetData, null] | [null, Error]> => {
   const [retData, errData] = await tryCatch(
     auth.api.signUpEmail({
       body: {
@@ -34,6 +38,8 @@ export const signUpAction = async ({ email, name, password }: SignUpData): Promi
       },
     }),
   );
+
+  // console.log(retData, errData);
 
   if (errData) {
     return [null, errData];

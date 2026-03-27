@@ -1,5 +1,5 @@
 // Export all schemas
-export * from './users';
+export * from './auth.schema';
 export * from './articles';
 export * from './templates';
 export * from './linkedInTokens';
@@ -11,14 +11,13 @@ export * from './articleTags';
 export type { Article, NewArticle, ArticleStatus } from './articles';
 export type { Tag, NewTag } from './tags';
 export type { ArticleTag, NewArticleTag } from './articleTags';
-export type { User, NewUser } from './users';
 
 // Import for relations
 import { relations } from 'drizzle-orm';
 import { articles } from './articles';
 import { tags } from './tags';
 import { articleTags } from './articleTags';
-import { users } from './users';
+import { users, accounts, sessions, verifications } from './auth.schema';
 
 /**
  * Define Drizzle ORM relations between tables.
@@ -50,3 +49,15 @@ export const articleTagsRelations = relations(articleTags, ({ one }) => ({
     references: [tags.id],
   }),
 }));
+
+// export const dbSchema = {
+//   ...articleTags,
+//   ...articles,
+//   ...tags,
+//   ...users,
+
+//   ...accounts,
+//   ...sessions,
+//   ...verifications,
+//   // ... your other application schemas
+// } as const;

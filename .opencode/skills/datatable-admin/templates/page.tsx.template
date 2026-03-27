@@ -1,0 +1,47 @@
+{{IMPORTS}}
+import { Metadata } from 'next';
+import { {{Entity}}DataTable } from './{{entity}}-data-table';
+import { columns } from './{{entity}}-columns';
+import { get{{Entity}}Page } from '@/actions/{{entity}}/{{entity}}';
+
+export const metadata: Metadata = {
+  title: '{{title}}',
+  description: '{{description}}',
+};
+
+interface {{Entity}}PageProps {
+  searchParams: Promise<{
+    page?: string;
+    take?: string;
+    search?: string;
+  }>;
+}
+
+export default async function {{Entity}}Page({ searchParams }: {{Entity}}PageProps) {
+  const params = await searchParams;
+  const page = Number(params.page) || 1;
+  const take = Number(params.take) || 10;
+  const search = params.search || '';
+
+  const { data, total, totalPages } = await get{{Entity}}Page({ page, take, search });
+
+  return (
+    <div className="container mx-auto py-6">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold tracking-tight">{{title}}</h1>
+        <p className="text-muted-foreground">
+          {{description}}
+        </p>
+      </div>
+
+      <{{Entity}}DataTable 
+        columns={columns} 
+        data={data} 
+        total={total}
+        totalPages={totalPages}
+        currentPage={page}
+        pageSize={take}
+      />
+    </div>
+  );
+}

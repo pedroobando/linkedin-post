@@ -2,7 +2,7 @@ import { betterAuth } from 'better-auth';
 import { nextCookies } from 'better-auth/next-js';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 
-import { db } from '@/db';
+import { accounts, db, sessions, users, verifications } from '@/db';
 
 // Configuración de autenticación con la instancia estática de la base de datos
 export const auth = betterAuth({
@@ -19,7 +19,13 @@ export const auth = betterAuth({
     requireEmailVerification: false, // Only if you want to block login completely
   },
   database: drizzleAdapter(db, {
-    provider: 'pg',
+    provider: 'sqlite',
+    schema: {
+      users: users,
+      sessions: sessions,
+      accounts: accounts,
+      verifications: verifications,
+    },
     usePlural: true, // Optional: Use plural table names (e.g., "users" instead of "user")
     debugLogs: false, // Optional
   }),

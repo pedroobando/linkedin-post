@@ -1,0 +1,56 @@
+'use client';
+
+import * as React from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { {{Entity}} } from '@/db/schema';
+
+// Validation schema - to be replaced with actual fields
+const formSchema = z.object({
+  {{ZOD_SCHEMA_FIELDS}}
+});
+
+export type {{Entity}}FormData = z.infer<typeof formSchema>;
+
+interface Use{{Entity}}FormProps {
+  initialData?: {{Entity}} | null;
+}
+
+export function use{{Entity}}Form({ initialData }: Use{{Entity}}FormProps = {}) {
+  const defaultValues = React.useMemo(() => {
+    if (initialData) {
+      return {
+        {{DEFAULT_VALUES}}
+      };
+    }
+    return {
+      {{EMPTY_VALUES}}
+    };
+  }, [initialData]);
+
+  const form = useForm<{{Entity}}FormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues,
+  });
+
+  // Reset form when initialData changes
+  React.useEffect(() => {
+    if (initialData) {
+      form.reset({
+        {{RESET_VALUES}}
+      });
+    } else {
+      form.reset({
+        {{EMPTY_VALUES}}
+      });
+    }
+  }, [initialData, form]);
+
+  return {
+    form,
+    isSubmitting: form.formState.isSubmitting,
+    isValid: form.formState.isValid,
+    errors: form.formState.errors,
+  };
+}

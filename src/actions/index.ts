@@ -1,5 +1,6 @@
 export { signInAction } from '@/actions/auth/signin-action';
 export { signOutAction } from '@/actions/auth/signout-action';
+export { changePassAction } from '@/actions/auth/change-pass';
 export { signUpAction } from '@/actions/auth/signup-action';
 
 //INFO: MinIO Server Actions
@@ -13,28 +14,55 @@ export { getUsersAll, getUserbyEmail, getUserbyId, getUsersPage } from '@/action
 export { setUserRole } from '@/actions/users/set-user-role';
 
 //INFO: Articles Server Actions
+// READ Operations
 export {
-  getArticles,
-  getArticlesByUser,
+  getAllArticles as getArticles,
   getArticleById,
-  getArticlesByTag,
-  createArticle,
-  updateArticle,
-  deleteArticle,
+  getArticlesByUserId as getArticlesByUser,
+  getArticlesByStatus,
   searchArticles,
+  getArticlesWithTags,
   getArticleStats,
-} from '@/actions/articles';
-export type { Article, NewArticle, ArticleWithTags } from '@/actions/articles';
+} from '@/actions/articles/get-article';
+
+// CREATE Operations
+export { insertArticle, createArticle } from '@/actions/articles/ins-article';
+
+// UPDATE Operations
+export { updateArticleWithTags as updateArticle, updateArticleStatus, upsertArticle } from '@/actions/articles/upd-article';
+
+// DELETE Operations
+export { deleteArticle, deleteArticles } from '@/actions/articles/del-article';
+
+// Types
+export type { ArticleWithTags, ArticleStats } from '@/actions/articles/utils';
+export type { Article, NewArticle, ArticleStatus } from '@/db/schema';
 
 //INFO: Tags Server Actions
 export {
+  // Create
   upsertTag,
+  // Read
+  getTagById,
+  getAllTags,
+  getAllTagsWithCount,
+  searchTags,
+  // Update
+  updateTag,
+  // Delete
+  deleteTag,
+  deleteTags,
+  deleteOrphanedTags,
+  // Admin
+  canDeleteTag,
+  getTagStats,
+  // Article associations
   getArticleTags,
   getArticleTagObjects,
   setArticleTags,
   addTagToArticle,
   removeTagFromArticle,
-  getAllTagsWithCount,
-  deleteOrphanedTags,
-  searchTags,
-} from '@/actions/tags/index';
+} from '@/actions/tags';
+
+//INFO: Tags Types
+export type { Tag, TagWithCount, NewTag } from '@/actions/tags';

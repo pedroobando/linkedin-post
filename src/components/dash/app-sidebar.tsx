@@ -1,100 +1,131 @@
 'use client';
 
 import * as React from 'react';
+
+import { NavDocuments } from '@/components/dash/nav-documents';
+import { NavMain } from '@/components/dash/nav-main';
+import { NavSecondary } from '@/components/dash/nav-secondary';
+import { NavUser } from '@/components/dash/nav-user';
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuItem,
   SidebarMenuButton,
-  SidebarFooter,
+  SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import {
-  LayoutDashboard,
-  FileText,
-  Tags,
-  History,
-  Settings,
-  Layers,
-} from 'lucide-react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { cn } from '@/lib/utils';
+  IconDashboard,
+  IconArticle,
+  IconChartBar,
+  IconTemplate,
+  IconCalendar,
+  IconSettings,
+  IconHelp,
+  IconSearch,
+  IconBrandLinkedin,
+  IconHistory,
+  IconArticleFilled,
+  IconTag,
+} from '@tabler/icons-react';
 
-const navItems = [
-  {
-    title: 'Dashboard',
-    href: '/',
-    icon: LayoutDashboard,
+const data = {
+  user: {
+    name: 'User',
+    email: 'user@example.com',
+    avatar: '/avatars/user.jpg',
   },
-  {
-    title: 'Articles',
-    href: '/articles',
-    icon: FileText,
-  },
-  {
-    title: 'Templates',
-    href: '/templates',
-    icon: Layers,
-  },
-  {
-    title: 'Tags',
-    href: '/tags',
-    icon: Tags,
-  },
-  {
-    title: 'History',
-    href: '/history',
-    icon: History,
-  },
-  {
-    title: 'Settings',
-    href: '/settings',
-    icon: Settings,
-  },
-];
+  navMain: [
+    {
+      title: 'Dashboard',
+      url: '/dash',
+      icon: <IconDashboard />,
+    },
+    {
+      title: 'Articles',
+      url: '#',
+      icon: <IconArticle />,
+    },
+    {
+      title: 'Templates',
+      url: '#',
+      icon: <IconTemplate />,
+    },
+    {
+      title: 'Tags',
+      url: '/dash/tags',
+      icon: <IconTag />,
+    },
+    {
+      title: 'Schedule',
+      url: '#',
+      icon: <IconCalendar />,
+    },
+    {
+      title: 'Analytics',
+      url: '#',
+      icon: <IconChartBar />,
+    },
+  ],
+  navSecondary: [
+    {
+      title: 'Settings',
+      url: '#',
+      icon: <IconSettings />,
+    },
+    {
+      title: 'Get Help',
+      url: '#',
+      icon: <IconHelp />,
+    },
+    {
+      title: 'Search',
+      url: '#',
+      icon: <IconSearch />,
+    },
+  ],
+  documents: [
+    {
+      name: 'LinkedIn Profile',
+      url: '#',
+      icon: <IconBrandLinkedin />,
+    },
+    {
+      name: 'Published Posts',
+      url: '#',
+      icon: <IconArticleFilled />,
+    },
+    {
+      name: 'Publish History',
+      url: '#',
+      icon: <IconHistory />,
+    },
+  ],
+};
 
-export function AppSidebar() {
-  const pathname = usePathname();
-
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar>
+    <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
-        <Link href="/" className="flex items-center gap-2 px-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-            <FileText className="h-4 w-4 text-primary-foreground" />
-          </div>
-          <span className="text-lg font-semibold">LinkedIn Post</span>
-        </Link>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:p-1.5!">
+              <a href="/dash">
+                <IconBrandLinkedin className="size-5!" />
+                <span className="text-base font-semibold">LinkedIn Post</span>
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarMenu>
-          {navItems.map((item) => {
-            const isActive = pathname === item.href || pathname?.startsWith(`${item.href}/`);
-            return (
-              <SidebarMenuItem key={item.href}>
-                <SidebarMenuButton asChild isActive={isActive}>
-                  <Link
-                    href={item.href}
-                    className={cn(
-                      'flex items-center gap-2',
-                      isActive && 'bg-accent text-accent-foreground'
-                    )}
-                  >
-                    <item.icon className="h-4 w-4" />
-                    <span>{item.title}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            );
-          })}
-        </SidebarMenu>
+        <NavMain items={data.navMain} />
+        <NavDocuments items={data.documents} />
+        <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <div className="px-4 py-2">
-          <p className="text-xs text-muted-foreground">v1.0.0</p>
-        </div>
+        <NavUser user={data.user} />
       </SidebarFooter>
     </Sidebar>
   );

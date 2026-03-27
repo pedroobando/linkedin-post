@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Data Migration Script: JSON Tags → Relational Tags
  * 

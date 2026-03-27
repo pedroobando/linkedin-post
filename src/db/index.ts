@@ -1,19 +1,22 @@
 import 'dotenv/config';
-import { drizzle } from 'drizzle-orm/libsql';
+import Database from 'better-sqlite3';
+import { drizzle } from 'drizzle-orm/better-sqlite3';
+// import { dbSchema } from '@/db/schema/index';
 
-import * as schema from '@/db/schema/index';
+// Database file path - use absolute path for better reliability
+import { resolve } from 'path';
+const dbPath = resolve(process.cwd(), process.env.DB_FILE_NAME || './sqlite.db');
 
-// Conexión a la base de datos SQLite usando libsql
-const dbUrl = process.env.DB_FILE_NAME || 'file:./sqlite.db';
-
-export const db = drizzle(dbUrl, {
-  schema,
+const sqlite = new Database(dbPath);
+export const db = drizzle({
+  client: sqlite,
+  // schema: dbSchema,
 });
 
 // Función para obtener instancia de la base de datos
-export const getDb = () => {
-  return drizzle(dbUrl, {
-    schema,
+export const getDb = async () => {
+  return drizzle({
+    client: sqlite,
   });
 };
 

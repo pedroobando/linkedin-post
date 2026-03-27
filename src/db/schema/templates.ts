@@ -1,6 +1,6 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 import { createId } from '@paralleldrive/cuid2';
-import { users } from './users';
+import { users } from './auth.schema';
 
 export const templates = sqliteTable('templates', {
   id: text('id').primaryKey().$defaultFn(() => createId()),

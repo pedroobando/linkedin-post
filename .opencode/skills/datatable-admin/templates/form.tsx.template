@@ -1,0 +1,116 @@
+'use client';
+
+import * as React from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { {{Entity}}, {{NewEntity}} } from '@/db/schema';
+import { Loader2 } from 'lucide-react';
+{{RELATION_IMPORTS}}
+
+// Validation schema
+const formSchema = z.object({
+  {{ZOD_SCHEMA_FIELDS}}
+});
+
+export type {{Entity}}FormData = z.infer<typeof formSchema>;
+
+interface {{Entity}}FormProps {
+  isOpen: boolean;
+  onClose: () => void;
+  initialData: {{Entity}} | null;
+  onSubmit: (data: {{Entity}}FormData) => Promise<void>;
+}
+
+export function {{Entity}}Form({ isOpen, onClose, initialData, onSubmit }: {{Entity}}FormProps) {
+  const form = useForm<{{Entity}}FormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {{DEFAULT_VALUES}},
+  });
+
+  // Reset form when initialData changes
+  React.useEffect(() => {
+    if (initialData) {
+      form.reset({
+        {{RESET_VALUES}}
+      });
+    } else {
+      form.reset({
+        {{EMPTY_VALUES}}
+      });
+    }
+  }, [initialData, form]);
+
+  const isSubmitting = form.formState.isSubmitting;
+
+  const handleSubmit = async (data: {{Entity}}FormData) => {
+    await onSubmit(data);
+    form.reset();
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-[600px]">
+        <DialogHeader>
+          <DialogTitle>
+            {initialData ? 'Editar {{Entity}}' : 'Crear {{Entity}}'}
+          </DialogTitle>
+          <DialogDescription>
+            {initialData
+              ? 'Modifica los datos y guarda los cambios.'
+              : 'Completa los datos para crear un nuevo registro.'}
+          </DialogDescription>
+        </DialogHeader>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            {{FORM_FIELDS}}
+
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+                disabled={isSubmitting}
+              >
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {initialData ? 'Guardar cambios' : 'Crear'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}

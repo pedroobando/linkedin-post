@@ -1,0 +1,3 @@
+// Export all hooks
+export { use{{Entity}}Datatable } from './use-{{entity}}-datatable';
+export { use{{Entity}}Form, type {{Entity}}FormData } from './use-{{entity}}-form';

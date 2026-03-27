@@ -1,6 +1,6 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 import { createId } from '@paralleldrive/cuid2';
-import { users } from './users';
+import { users } from './auth.schema';
 
 export const linkedInTokens = sqliteTable('linked_in_tokens', {
   id: text('id').primaryKey().$defaultFn(() => createId()),

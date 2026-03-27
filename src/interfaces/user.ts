@@ -3,9 +3,9 @@ export interface IUser {
   name: string;
   email: string;
   avatar?: string | null;
-  linkedInProfile?: string | null;
-  bio?: string | null;
-  isActive: boolean;
+  // linkedInProfile?: string | null;
+  // bio?: string | null;
+  // isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
